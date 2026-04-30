@@ -1,0 +1,28 @@
+#!/bin/bash
+# Pre-commit hook: lint + format check
+echo "Running pre-commit checks..."
+
+# Python
+if command -v ruff &> /dev/null; then
+  echo "Checking Python lint..."
+  ruff check --select E,F,W .
+  if [ $? -ne 0 ]; then
+    echo "Lint failed. Fix errors before committing."
+    exit 1
+  fi
+  
+  echo "Checking Python format..."
+  ruff format --check .
+  if [ $? -ne 0 ]; then
+    echo "Format check failed. Run 'ruff format .' before committing."
+    exit 1
+  fi
+fi
+
+# Check for secrets
+if grep -r 'sk-[a-zA-Z0-9]\{20,\}' --include="*.py" --include="*.js" --include="*.ts" . 2>/dev/null; then
+  echo "POSSIBLE SECRET FOUND IN CODE! Aborting commit."
+  exit 1
+fi
+
+echo "Pre-commit checks passed."

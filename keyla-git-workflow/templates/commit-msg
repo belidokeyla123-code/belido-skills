@@ -1,0 +1,8 @@
+#!/bin/bash
+# Commit message convention check
+msg=$(cat "$1")
+if ! echo "$msg" | grep -qE "^(feat|fix|refactor|chore|docs|test|perf|style|hotfix): "; then
+  echo "Commit message must follow convention: <tipo>: <descrição>"
+  echo "Tipos: feat, fix, refactor, chore, docs, test, perf, style, hotfix"
+  exit 1
+fi
